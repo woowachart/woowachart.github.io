@@ -1,0 +1,8 @@
+# Encoding inputs and intermediate files are local work, not site assets.
+/media/enc.py
+/docs/superpowers/
+*.part.mp4
+*.part
+__pycache__/
+.DS_Store
+Thumbs.db
