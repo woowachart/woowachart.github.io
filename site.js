@@ -2,6 +2,22 @@
 
 // Set this ONE value to the final HTTPS checkout URL to enable both languages.
 const PURCHASE_URL = "";
+const SELLER_NAME = "LK REALTY CONSULTING INC.";
+const CONTACT_EMAIL = "woowachart@gmail.com";
+const PAYMENT_PROVIDER_NAME = "";
+
+document.querySelectorAll("[data-seller-name]").forEach((element) => {
+  element.textContent = SELLER_NAME;
+});
+document.querySelectorAll("[data-contact-email]").forEach((element) => {
+  element.textContent = CONTACT_EMAIL;
+  if (element.tagName === "A") element.href = "mailto:" + CONTACT_EMAIL;
+});
+if (PAYMENT_PROVIDER_NAME) {
+  document.querySelectorAll("[data-payment-provider]").forEach((element) => {
+    element.textContent = PAYMENT_PROVIDER_NAME;
+  });
+}
 
 if (PURCHASE_URL.startsWith("https://")) {
   document.querySelectorAll("[data-purchase]").forEach((link) => {

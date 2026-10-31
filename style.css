@@ -147,6 +147,21 @@ details p { padding: 0 24px 24px 0; color: var(--muted); font-size: 14px; }
 .footer-name { display: block; font-size: 16px; color: var(--text); font-weight: 750; margin-bottom: 4px; }
 .footer-right { text-align: right; }
 .footer-right a { display: inline-block; margin-top: 5px; }
+.footer-inner > div { min-width: 0; }
+.footer-legal { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 16px; margin-bottom: 12px; }
+.footer-legal a { min-height: 32px; display: inline-flex; align-items: center; }
+.purchase-policy { margin-top: 14px; text-align: center; font-size: 13px; color: var(--muted); }
+.legal-page { max-width: 860px; padding-block: 64px 80px; }
+.legal-page h1 { margin-top: 24px; }
+.legal-date { margin-top: 18px; color: var(--muted); font-size: 14px; }
+.legal-content { margin-top: 36px; }
+.legal-content section { border-top: 1px solid var(--line); padding-top: 28px; margin-top: 28px; }
+.legal-content h2 { font-size: clamp(22px, 3vw, 28px); letter-spacing: -.6px; margin-bottom: 18px; }
+.legal-content p + p { margin-top: 14px; }
+.legal-content ul { padding-left: 24px; overflow-wrap: anywhere; }
+.seller-details { display: grid; grid-template-columns: minmax(100px, 1fr) minmax(0, 3fr); gap: 10px 24px; margin: 0 0 24px; }
+.seller-details dt { font-weight: 700; }
+.seller-details dd { margin: 0; overflow-wrap: anywhere; }
 .not-found { min-height: 72vh; display: grid; place-content: center; gap: 25px; max-width: 700px; padding-block: 80px; }
 .not-found h1 { font-size: clamp(35px, 5vw, 55px); }
 .not-found p { color: var(--muted); }
@@ -210,6 +225,10 @@ html[lang="en"] h2 { letter-spacing: -1.4px; }
   .closing { margin-top: 74px; padding: 40px 0; }
   .footer-inner { flex-direction: column; align-items: flex-start; gap: 18px; }
   .footer-right { text-align: left; }
+  .footer-legal { justify-content: flex-start; }
+  .legal-page { padding-block: 40px 56px; }
+  .seller-details { grid-template-columns: 1fr; gap: 4px; }
+  .seller-details dd { margin-bottom: 12px; }
 }
 @media (max-width: 480px) {
   html { scroll-padding-top: 140px; }

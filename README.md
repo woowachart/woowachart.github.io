@@ -22,7 +22,7 @@ py -m http.server 8765 --bind 127.0.0.1
 - 오류 페이지: http://127.0.0.1:8765/404.html
 - 종료: 서버 터미널에서 `Ctrl+C`
 
-두 페이지 상단의 `한국어 | English` 링크와 푸터의 언어 링크를 누르면 `localStorage`의 `woowachart-language`에 `ko` 또는 `en`을 저장합니다. 루트의 `lang.js`는 head 앞에서 동기 실행됩니다. 저장된 선택이 없을 때만 `navigator.languages[0]`, 없으면 `navigator.language`를 확인하고, `ko`로 시작하지 않으면 `location.replace`로 `/en/`으로 이동합니다. 자동 감지 결과 자체는 저장하지 않습니다. `/en/` 직접 방문은 저장된 언어와 무관하게 영어를 유지합니다. 저장소가 차단되면 명시적 선택을 `?lang=ko` 또는 `?lang=en`으로 전달해 한국어 선택이 자동 감지 때문에 되돌아가지 않게 합니다. JavaScript를 꺼도 실제 링크로 두 페이지를 오갈 수 있습니다.
+홈과 정책 페이지 상단의 `한국어 | English` 링크와 푸터의 언어 링크를 누르면 `localStorage`의 `woowachart-language`에 `ko` 또는 `en`을 저장합니다. 루트의 `lang.js`는 head 앞에서 동기 실행됩니다. 저장된 선택이 없을 때만 `navigator.languages[0]`, 없으면 `navigator.language`를 확인하고, `ko`로 시작하지 않으면 `location.replace`로 영어판에 이동합니다. 홈은 `/en/`, 정책 문서는 같은 이름의 `/en/terms.html` 등으로 이동하며 쿼리와 앵커를 유지합니다. 자동 감지 결과 자체는 저장하지 않습니다. `/en/` 아래 직접 방문은 저장된 언어와 무관하게 영어를 유지합니다. 저장소가 차단되면 명시적 선택을 `?lang=ko` 또는 `?lang=en`으로 전달해 한국어 선택이 자동 감지 때문에 되돌아가지 않게 합니다. JavaScript를 꺼도 실제 링크로 같은 문서의 두 언어판을 오갈 수 있습니다. 404는 자동 언어 이동 없이 두 언어 홈 링크를 제공합니다.
 
 `index.html`을 직접 열어도 기본 내용을 볼 수 있지만, 루트 경로를 사용하는 404 페이지까지 확인하려면 위 HTTP 서버를 사용하세요. Python 기본 서버는 없는 주소에 홈페이지의 `404.html`을 자동 적용하지 않으므로 로컬에서는 `/404.html`을 직접 엽니다. GitHub Pages에서는 배포된 `404.html`을 사용합니다.
 
@@ -46,6 +46,33 @@ const PURCHASE_URL = ""; // 현재: 비활성
 JavaScript를 끈 경우 콘텐츠·메뉴·FAQ·동영상은 사용할 수 있지만 구매 링크는 비활성 상태를 유지합니다.
 
 업데이트의 제공 범위·배포 방식은 미확정이므로 FAQ에서 결제 시작 전 안내 예정으로 표시했습니다. 실제 정책이 확정되면 두 언어 FAQ를 함께 수정하세요.
+
+## 정책·판매자 정보 (시행일 2026-10-31)
+
+정책 본문과 공통 푸터는 정적 HTML입니다. JavaScript를 꺼도 정책, 판매자 기본값, 이메일, 문서별 언어 전환 링크가 보입니다. 모든 페이지(404 포함)의 푸터에서 네 문서를 열 수 있고, 두 홈의 가격·구매 버튼 바로 아래에는 약관·환불 링크가 있습니다.
+
+| 한국어 | 영어 | 내용 |
+| --- | --- | --- |
+| `terms.html` | `en/terms.html` | 게임의 성격, USD 250 평생판, 최대 2대 활성화와 기기 이전, 결제·환불, Alberta 준거법 |
+| `privacy.html` | `en/privacy.html` | 언어 저장, 확장 프로그램 로컬 데이터, Binance API, 라이선스 API, 주문·문의 정보, 열람·삭제, 아동 |
+| `refund.html` | `en/refund.html` | 구매 후 14일 이내 이유 없는 전액 환불, 이메일 신청, 라이선스 비활성화, 법정 예외 |
+| `contact.html` | `en/contact.html` | 개인 사업자 정보, 지원 이메일, 결제 대행사 확정 위치 |
+
+### 심사 제출 전에 바꿀 자리
+
+1. **판매자 이름**: `site.js`의 `SELLER_NAME` 한 값을 실제 이름으로 변경하면 JavaScript가 켜진 모든 페이지에 반영됩니다. 기본값은 두 언어에서 동일한 `LK REALTY CONSULTING INC.`입니다. JavaScript를 끈 방문자에게도 실제 이름이 보이도록 아래 11개 HTML의 모든 `<span data-seller-name>` 안 기본값을 함께 변경합니다.
+2. **결제 대행사 이름**: `contact.html`의 `payment-provider` 섹션에 유일한 HTML 교체 안내 주석이 있습니다. `site.js`의 `PAYMENT_PROVIDER_NAME` 한 값에 확정 업체명을 넣으면 양쪽 연락처 페이지에 반영됩니다. JavaScript 미사용 기본값은 `contact.html`, `en/contact.html`의 `data-payment-provider` 안에서도 바꾸고, 실제 업체 개인정보 처리방침 링크를 같은 섹션에 추가합니다. 확정 시 두 언어의 terms/privacy/refund 본문에 남아 있는 `예정`, `to be selected`, `아직 정해지지`, `has not been chosen`, `Once selected` 등의 안내도 확정 상태로 고칩니다. 현재는 어떤 업체도 선택한 것으로 표시하지 않습니다.
+3. **이메일**: `site.js`의 `CONTACT_EMAIL` 한 값을 변경합니다. 아래 11개 HTML의 모든 `data-contact-email` 요소에서 표시 문자열과 `mailto:` 주소도 함께 변경합니다. 현재 값은 `woowachart@gmail.com`입니다.
+
+HTML 기본값 변경 대상: `index.html`, `404.html`, `terms.html`, `privacy.html`, `refund.html`, `contact.html`, `en/index.html`, `en/terms.html`, `en/privacy.html`, `en/refund.html`, `en/contact.html`.
+
+빠른 위치 검색: `rg -n 'data-seller-name|data-contact-email|data-payment-provider' -g '*.html'`. 공통 상수 변경은 즉시 화면에 적용되지만, HTML 기본값까지 맞춘 뒤 `py check_site.py`로 일치를 확인합니다. 결제를 열 때는 별도로 위의 `PURCHASE_URL`을 설정합니다.
+
+내부 메모: 이 문서 초안은 제공된 제품·판매·데이터 처리 사실을 정리한 것이며 법률 자문이 아닙니다. 실제 판매자·결제 업체 정보를 확정하고 업체별 제출 요건에 맞춰 검토해야 합니다. 심사 통과를 보장하는 문서는 아닙니다. 참고한 공식 자료: [Paddle 도메인 심사 안내](https://www.paddle.com/help/start/account-verification/what-is-domain-verification), [캐나다 개인정보보호위원회의 PIPEDA와 주법 안내](https://www.priv.gc.ca/en/privacy-topics/privacy-laws-in-canada/the-personal-information-protection-and-electronic-documents-act-pipeda/r_o_p/prov-pipeda/). PIPEDA는 적용 범위에서만 언급했습니다.
+
+### 추가 검사 범위
+
+`py check_site.py`는 8개 정책 문서의 존재, 전체 푸터의 네 링크·판매자·이메일, HTML 기본값과 공통 상수 일치, 이메일 링크, 구매 전 정책 링크, 시행일, 문서별 canonical/hreflang/언어 전환, 공통 스크립트를 검사합니다. 기존 링크·앵커·자산·외부 의존성 검사도 유지합니다. JavaScript 실행이나 시각적 배치까지 검증하는 검사는 아닙니다.
 
 ## 미디어
 
@@ -126,7 +153,8 @@ rec_en/split4_crash/20261030T035129-be0313/split4_crash.webm
 | `index.html` | 한국어 기본 페이지 |
 | `en/index.html` | 영어 페이지 |
 | `style.css` | 두 언어·404 공통, 반응형 및 시스템 테마 |
-| `site.js` | 구매 URL 한 곳과 영상 오류 안내 |
+| `site.js` | 구매 URL, 판매자·이메일·결제 대행사 공통 표시, 영상 오류 안내 |
+| `terms.html`, `privacy.html`, `refund.html`, `contact.html` 및 `en/` 대응 파일 | 한국어·영어 정책과 판매자 정보 |
 | `favicon.svg` | 초록 캔들 + 노랑 ‘우’ 윤곽선, 폰트 의존 없음 |
 | `404.html` | 한국어·영어 홈 복귀 링크 |
 | `.nojekyll` | 정적 파일 배포 |
@@ -145,6 +173,10 @@ Get-ChildItem -Recurse -File -Force |
 
 ## 검증 기록 / 한계
 
+- 정책 페이지 추가 후 `py check_site.py`: **PASS: 11 HTML pages, 288 local references, 19 media files, 0 errors**.
+- `node --check site.js`, `node --check lang.js` 통과. Node 표준 라이브러리의 격리된 실행 환경에서 문서별 언어 이동, 쿼리·앵커 유지, 저장소 차단, 판매자·이메일 상수 변경, 결제 활성화 등 29개 동작 단언을 확인했습니다. 실제 브라우저 검증을 대신하지는 않습니다.
+- 정책 8개를 포함한 전체 HTML 11개가 로컬 HTTP에서 200 응답을 반환하고 디스크의 파일 내용과 일치했습니다.
+- 이번 작업에서도 내장 브라우저 연결에 실패했고 로컬 Chrome 실행은 환경 정책에 차단되었습니다. 새 페이지의 실제 화면 배치·모바일·테마 검수는 미완료입니다.
 - 로컬 HTTP에서 두 언어 페이지, 404 문서, CSS, JS, favicon의 HTTP 200 응답을 확인했습니다.
 - 이미지·영상·포스터·로컬 링크·섹션 앵커가 존재하며 ID 중복과 누락된 이미지 alt가 없습니다. 로고는 인접한 제품명과 중복 낭독되지 않도록 빈 alt입니다.
 - 스크린샷 14개의 1280×720 크기와 200 KiB 미만 용량, 영상 두 개의 H.264/AAC 메타데이터를 확인했습니다.
@@ -153,7 +185,9 @@ Get-ChildItem -Recurse -File -Force |
 - **실제 브라우저 렌더링과 재생 검수는 미완료입니다.** 내장 브라우저 연결 오류와 로컬 Chrome 프로세스 실행 권한 오류로 이 환경에서 확인하지 못했습니다. 모바일 화면, 테마, 키보드 조작, 영상 재생은 위 로컬 확인 방법으로 검토할 수 있습니다.
 - GitHub Pages 공개 상태와 실제 결제는 검증 대상이 아닙니다. 배포·결제는 실행하지 않았습니다.
 
-## File sizes (bytes)
+## 초기 홈페이지 작성 당시 파일 크기 (bytes)
+
+아래는 정책 페이지 추가 전 기록입니다. 현재 크기는 위 PowerShell 명령으로 확인합니다.
 
 | File | Bytes |
 | --- | ---: |

@@ -30,5 +30,10 @@
     const browserLanguage = (navigator.languages && navigator.languages[0]) || navigator.language || "ko";
     preferred = browserLanguage.toLowerCase().startsWith("ko") ? "ko" : "en";
   }
-  if (preferred === "en") location.replace("en/" + location.search + location.hash);
+  if (preferred === "en") {
+    // lang.js runs before the head links are parsed; preserve the policy filename.
+    const filename = location.pathname.split("/").pop();
+    const page = /^(terms|privacy|refund|contact)\.html$/.test(filename) ? filename : "";
+    location.replace("en/" + page + location.search + location.hash);
+  }
 })();

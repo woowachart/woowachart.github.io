@@ -21,6 +21,7 @@ BANNED = re.compile(
 )
 # Drawing tools are real features; only product-category wording is forbidden.
 OLD_CATEGORY = re.compile(r"연습\s*도구|차트\s*도구|도구를\s*사용|(?:practice|trading)\s+tool\b", re.I)
+LEGAL_PAGES = ("terms.html", "privacy.html", "refund.html", "contact.html")
 
 
 class Page(HTMLParser):
@@ -149,6 +150,71 @@ def check_site(root=ROOT):
         if scripts and scripts[0].get("src", "").endswith("lang.js"):
             before_script = source.split("<script", 1)[0]
             require("<link" not in before_script and "<title" not in before_script, f"{relative}: lang.js must be at start of head")
+
+    # Policy pages must be present as readable HTML, including without JavaScript.
+    for locale, prefix in (("ko", ""), ("en", "en/")):
+        for name in LEGAL_PAGES:
+            path = root / (prefix + name)
+            require(path in pages, f"Missing page: {prefix}{name}")
+
+    site_js = sources.get(root / "site.js", "")
+    settings = {}
+    for key in ("SELLER_NAME", "CONTACT_EMAIL"):
+        match = re.search(rf'const {key} = "([^"\n]+)";', site_js)
+        require(bool(match), f"site.js: missing {key} constant")
+        if match:
+            settings[key] = match[1]
+
+    for path, page in pages.items():
+        label = path.relative_to(root).as_posix()
+        source = sources[path]
+        locale = "en" if path.parent == root / "en" else "ko"
+        prefix = "" if path.name != "404.html" else "/"
+        footer_match = re.search(r"<footer\b[^>]*>(.*?)</footer>", source, re.S)
+        require(bool(footer_match), f"{label}: missing footer")
+        footer = Page(footer_match[1] if footer_match else "")
+        links = {a.get("href") for t, a in footer.tags if t == "a"}
+        for name in LEGAL_PAGES:
+            require(prefix + name in links, f"{label}: missing footer policy link {name}")
+        for marker, key in (("data-seller-name", "SELLER_NAME"), ("data-contact-email", "CONTACT_EMAIL")):
+            require(any(marker in a for _, a in footer.tags), f"{label}: missing footer {marker}")
+            for match in re.finditer(rf'<(span|a)\b[^>]*\b{marker}\b[^>]*>(.*?)</\1>', source, re.S):
+                require(match[2] == settings.get(key), f"{label}: {marker} HTML fallback differs from {key}")
+        for tag, attrs in page.tags:
+            if tag == "a" and "data-contact-email" in attrs:
+                require(attrs.get("href") == "mailto:" + settings.get("CONTACT_EMAIL", ""),
+                        f"{label}: email href differs from CONTACT_EMAIL")
+        require(any(t == "script" and a.get("src", "").endswith("site.js") for t, a in page.tags),
+                f"{label}: missing shared site.js")
+
+        if path.name == "index.html":
+            notice = re.search(r'<p class="purchase-policy">(.*?)</p>', source, re.S)
+            require(bool(notice) and all(f'href="{name}"' in notice[1] for name in ("terms.html", "refund.html")),
+                    f"{label}: missing purchase policy links")
+        if path.name not in LEGAL_PAGES:
+            continue
+        require('datetime="2026-10-31"' in source, f"{label}: missing effective date")
+        require('id="main"' in source and len([t for t, _ in page.tags if t == "h1"]) == 1,
+                f"{label}: missing main or unique heading")
+        require(any(t == "html" and a.get("lang") == locale for t, a in page.tags), f"{label}: wrong language")
+        expected = f"https://{HOST}/" + ("en/" if locale == "en" else "") + path.name
+        require(any(t == "link" and a.get("rel") == "canonical" and a.get("href") == expected
+                    for t, a in page.tags), f"{label}: wrong canonical URL")
+        alternates = {a.get("hreflang"): a.get("href") for t, a in page.tags if t == "link" and a.get("rel") == "alternate"}
+        for language, directory in (("ko", ""), ("en", "en/"), ("x-default", "")):
+            require(alternates.get(language) == f"https://{HOST}/{directory}{path.name}",
+                    f"{label}: wrong policy alternate {language}")
+        header = Page(source.split("<header", 1)[-1].split("</header>", 1)[0])
+        choices = {a.get("data-language"): a for t, a in header.tags if t == "a" and "data-language" in a}
+        for language in ("ko", "en"):
+            expected_link = (("../" if language == "ko" else "") if locale == "en"
+                             else ("" if language == "ko" else "en/")) + path.name
+            require(choices.get(language, {}).get("href") == expected_link,
+                    f"{label}: language switch must preserve document ({language})")
+        require(choices.get(locale, {}).get("aria-current") == "page", f"{label}: missing current language")
+        scripts = [a for t, a in page.tags if t == "script"]
+        require(bool(scripts) and scripts[0].get("src", "").endswith("lang.js")
+                and not {"async", "defer", "type"}.intersection(scripts[0]), f"{label}: blocking lang.js must load first")
 
     ignored = (root / ".gitignore").read_text(encoding="utf-8-sig").splitlines()
     for pattern in ("/media/enc.py", "/docs/superpowers/"):
