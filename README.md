@@ -55,7 +55,7 @@ JavaScript를 끈 경우 콘텐츠·메뉴·FAQ·동영상은 사용할 수 있�
 | --- | --- | --- |
 | `terms.html` | `en/terms.html` | 게임의 성격, USD 250 평생판, 최대 2대 활성화와 기기 이전, 결제·환불, Alberta 준거법 |
 | `privacy.html` | `en/privacy.html` | 언어 저장, 확장 프로그램 로컬 데이터, Binance API, 라이선스 API, 주문·문의 정보, 열람·삭제, 아동 |
-| `refund.html` | `en/refund.html` | 구매 후 14일 이내 이유 없는 전액 환불, 이메일 신청, 라이선스 비활성화, 법정 예외 |
+| `refund.html` | `en/refund.html` | 환불 불가(All Sales Final), 예외: 중복 결제·판매자 쪽 문제로 키 미작동, 법정 권리 유지 |
 | `contact.html` | `en/contact.html` | 개인 사업자 정보, 지원 이메일, 결제 대행사 확정 위치 |
 
 ### 심사 제출 전에 바꿀 자리
