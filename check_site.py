@@ -129,13 +129,13 @@ def check_site(root=ROOT):
         page, source = pages[path], sources[path]
         title = re.search(r"<title>(.*?)</title>", source, re.S)
         require(title and category in title[1], f"{relative}: game category missing from title")
-        require(subtitle in source, f"{relative}: hero game subtitle missing")
+        require(subtitle in re.sub(r"<[^>]+>", "", source), f"{relative}: hero game subtitle missing")
         metadata = {a.get("property", a.get("name")): a.get("content", "") for t, a in page.tags if t == "meta"}
         require(category in metadata.get("og:description", ""), f"{relative}: OG game category missing")
         footer = source.split("<footer", 1)[-1]
         notice = ("차트 트레이딩 게임이에요 · 실제 거래·실제 돈이 오가지 않아요 · 투자 조언이 아니에요"
                   if locale == "ko" else "It's a chart trading game · No real trading or real money involved · It's not investment advice")
-        require(notice in footer, f"{relative}: game notice missing")
+        require(notice in re.sub(r"<[^>]+>", "", footer), f"{relative}: game notice missing")
         alternates = {a.get("hreflang"): a.get("href") for t, a in page.tags if t == "link" and a.get("rel") == "alternate"}
         for language, suffix in (("ko", "/"), ("en", "/en/"), ("x-default", "/")):
             require(alternates.get(language) == f"https://{HOST}{suffix}", f"{relative}: invalid hreflang {language}")
