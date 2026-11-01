@@ -1,8 +1,21 @@
 "use strict";
 
 (() => {
-  const key = "woowachart-language";
+  const key = "gameofview-language";
+  const legacyKey = "woowachart-language";
   const valid = (value) => value === "ko" || value === "en";
+
+  // Migrate once on either locale; keep an existing valid new preference.
+  let savedLanguage;
+  try {
+    savedLanguage = localStorage.getItem(key);
+    const legacyLanguage = localStorage.getItem(legacyKey);
+    if (!valid(savedLanguage) && valid(legacyLanguage)) {
+      savedLanguage = legacyLanguage;
+      localStorage.setItem(key, savedLanguage);
+    }
+    if (legacyLanguage !== null) localStorage.removeItem(legacyKey);
+  } catch (_) { /* Keep the in-memory choice if storage writes are blocked. */ }
 
   // Real links still work without JavaScript. Save before normal navigation.
   document.addEventListener("click", (event) => {
@@ -22,9 +35,7 @@
   if (document.documentElement.lang !== "ko") return;
   let preferred = new URLSearchParams(location.search).get("lang");
   if (!valid(preferred)) {
-    try {
-      preferred = localStorage.getItem(key);
-    } catch (_) { /* Language detection also works when storage is unavailable. */ }
+    preferred = savedLanguage;
   }
   if (!valid(preferred)) {
     const browserLanguage = (navigator.languages && navigator.languages[0]) || navigator.language || "ko";

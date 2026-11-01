@@ -11,7 +11,9 @@ import sys
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parent
-HOST = "woowachart.github.io"
+HOST = "gameofview.com"
+BRAND = "Game of View"
+OLD_BRAND = re.compile(r"우아한차트|woowa\s*chart", re.I)
 EXCLUDED = {".git", "docs", "__pycache__", "node_modules", ".agents", ".codex"}
 BANNED = re.compile(
     r"trading\s*view|트레이딩\s*뷰|트뷰|go\s*charting|고차팅|"
@@ -109,6 +111,12 @@ def check_site(root=ROOT):
                 require(not (tag == "script" and not attrs.get("src")), f"{label}: inline script")
         for match in BANNED.finditer(text):
             errors.append(f"{label}: forbidden wording: {match.group()}")
+        # The contact address and one-time storage migration are intentional.
+        brand_text = text.replace("woowachart@gmail.com", "")
+        if path == root / "lang.js":
+            brand_text = brand_text.replace('"woowachart-language"', "")
+        for match in OLD_BRAND.finditer(brand_text):
+            errors.append(f"{label}: old product name: {match.group()}")
         if path in pages:
             for match in OLD_CATEGORY.finditer(text):
                 errors.append(f"{label}: old product category: {match.group()}")
@@ -131,6 +139,12 @@ def check_site(root=ROOT):
         require(title and category in title[1], f"{relative}: game category missing from title")
         require(subtitle in re.sub(r"<[^>]+>", "", source), f"{relative}: hero game subtitle missing")
         metadata = {a.get("property", a.get("name")): a.get("content", "") for t, a in page.tags if t == "meta"}
+        expected_home = f"https://{HOST}/" + ("en/" if locale == "en" else "")
+        require(any(t == "link" and a.get("rel") == "canonical" and a.get("href") == expected_home
+                    for t, a in page.tags), f"{relative}: wrong canonical URL")
+        require(metadata.get("og:url") == expected_home, f"{relative}: wrong OG URL")
+        require(metadata.get("og:site_name") == BRAND, f"{relative}: wrong OG product name")
+        require(BRAND in metadata.get("og:title", ""), f"{relative}: OG product title missing")
         require(category in metadata.get("og:description", ""), f"{relative}: OG game category missing")
         footer = source.split("<footer", 1)[-1]
         notice = ("차트 트레이딩 게임이에요 · 실제 거래·실제 돈이 오가지 않아요 · 투자 조언이 아니에요"
@@ -168,6 +182,12 @@ def check_site(root=ROOT):
     for path, page in pages.items():
         label = path.relative_to(root).as_posix()
         source = sources[path]
+        title = re.search(r"<title>(.*?)</title>", source, re.S)
+        require(title and BRAND in title[1], f"{label}: product name missing from title")
+        for class_name in ("brand", "footer-name"):
+            match = re.search(rf'<(?:a|span)\b[^>]*class="{class_name}"[^>]*>(.*?)</(?:a|span)>', source, re.S)
+            require(match and BRAND in "".join(Page(match[1]).words),
+                    f"{label}: product name missing from {class_name}")
         locale = "en" if path.parent == root / "en" else "ko"
         prefix = "" if path.name != "404.html" else "/"
         footer_match = re.search(r"<footer\b[^>]*>(.*?)</footer>", source, re.S)

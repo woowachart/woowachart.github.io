@@ -1,8 +1,8 @@
-# 우아한차트 / Woowa Chart
+# Game of View
 
-차트 트레이딩 게임 우아한차트의 한국어·영어 정적 홈페이지입니다. 순수 HTML + 공통 CSS + 작은 JavaScript 파일 두 개로 구성되어 있습니다. 빌드·패키지 설치·외부 라이브러리·CDN·웹 폰트·분석/추적 스크립트가 없습니다.
+차트 트레이딩 게임 Game of View의 한국어·영어 정적 홈페이지입니다. 순수 HTML + 공통 CSS + 작은 JavaScript 파일 두 개로 구성되어 있습니다. 빌드·패키지 설치·외부 라이브러리·CDN·웹 폰트·분석/추적 스크립트가 없습니다.
 
-예정 주소: **https://woowachart.github.io/** · 영어: **https://woowachart.github.io/en/**
+예정 주소: **https://gameofview.com/** · 영어: **https://gameofview.com/en/**
 
 현재 로컬 파일만 준비했습니다. 커밋, push, Pages 설정 변경, 배포는 수행하지 않았습니다.
 
@@ -22,7 +22,9 @@ py -m http.server 8765 --bind 127.0.0.1
 - 오류 페이지: http://127.0.0.1:8765/404.html
 - 종료: 서버 터미널에서 `Ctrl+C`
 
-홈과 정책 페이지 상단의 `한국어 | English` 링크와 푸터의 언어 링크를 누르면 `localStorage`의 `woowachart-language`에 `ko` 또는 `en`을 저장합니다. 루트의 `lang.js`는 head 앞에서 동기 실행됩니다. 저장된 선택이 없을 때만 `navigator.languages[0]`, 없으면 `navigator.language`를 확인하고, `ko`로 시작하지 않으면 `location.replace`로 영어판에 이동합니다. 홈은 `/en/`, 정책 문서는 같은 이름의 `/en/terms.html` 등으로 이동하며 쿼리와 앵커를 유지합니다. 자동 감지 결과 자체는 저장하지 않습니다. `/en/` 아래 직접 방문은 저장된 언어와 무관하게 영어를 유지합니다. 저장소가 차단되면 명시적 선택을 `?lang=ko` 또는 `?lang=en`으로 전달해 한국어 선택이 자동 감지 때문에 되돌아가지 않게 합니다. JavaScript를 꺼도 실제 링크로 같은 문서의 두 언어판을 오갈 수 있습니다. 404는 자동 언어 이동 없이 두 언어 홈 링크를 제공합니다.
+홈과 정책 페이지 상단의 `한국어 | English` 링크와 푸터의 언어 링크를 누르면 `localStorage`의 `gameofview-language`에 `ko` 또는 `en`을 저장합니다. 루트의 `lang.js`는 head 앞에서 동기 실행됩니다. 저장된 선택이 없을 때만 `navigator.languages[0]`, 없으면 `navigator.language`를 확인하고, `ko`로 시작하지 않으면 `location.replace`로 영어판에 이동합니다. 홈은 `/en/`, 정책 문서는 같은 이름의 `/en/terms.html` 등으로 이동하며 쿼리와 앵커를 유지합니다. 자동 감지 결과 자체는 저장하지 않습니다. `/en/` 아래 직접 방문은 저장된 언어와 무관하게 영어를 유지합니다. 저장소가 차단되면 명시적 선택을 `?lang=ko` 또는 `?lang=en`으로 전달해 한국어 선택이 자동 감지 때문에 되돌아가지 않게 합니다. JavaScript를 꺼도 실제 링크로 같은 문서의 두 언어판을 오갈 수 있습니다. 404는 자동 언어 이동 없이 두 언어 홈 링크를 제공합니다.
+
+기존 `woowachart-language` 값은 같은 사이트에서 처음 읽을 때 `gameofview-language`로 옮긴 뒤 옛 키를 삭제합니다. 새 키에 유효한 선택이 있으면 이를 우선합니다. 저장소 쓰기가 차단되면 옛 키를 보존하고 읽은 선택을 현재 방문에 적용합니다. localStorage는 출처별로 분리되므로 `woowachart.github.io`에서 `gameofview.com`으로 도메인이 바뀐 뒤에는 이전 도메인의 값을 읽을 수 없습니다.
 
 `index.html`을 직접 열어도 기본 내용을 볼 수 있지만, 루트 경로를 사용하는 404 페이지까지 확인하려면 위 HTTP 서버를 사용하세요. Python 기본 서버는 없는 주소에 홈페이지의 `404.html`을 자동 적용하지 않으므로 로컬에서는 `/404.html`을 직접 엽니다. GitHub Pages에서는 배포된 `404.html`을 사용합니다.
 
@@ -126,11 +128,11 @@ rec_en/split4_crash/20261030T035129-be0313/split4_crash.webm
 4. `.nojekyll`을 포함하므로 Jekyll 처리 없이 정적 파일을 제공합니다. 별도 빌드 도구나 GitHub Actions 워크플로는 필요 없습니다.
 5. 배포가 완료되면 한국어·영어 주소, 영상, 이미지, 존재하지 않는 주소의 404 응답을 확인합니다. HTTPS 적용 상태도 확인합니다.
 
-## 나중에 개인 도메인 연결
+## gameofview.com 도메인 연결 절차
 
-기본 `woowachart.github.io` 주소만 사용할 때는 **CNAME 파일을 만들지 않습니다.** 도메인이 정해지면:
+새 도메인은 **gameofview.com**으로 정했습니다. 아직 DNS가 준비되지 않았으므로 **현재 CNAME 파일은 만들지 않습니다.** 연결할 준비가 되면 다음 절차를 진행합니다.
 
-1. 저장소의 **Settings → Pages → Custom domain**에 실제 도메인을 입력합니다(예: `example.com`). 루트 **`CNAME`** 파일에는 프로토콜·경로 없이 그 도메인 한 줄만 둡니다. 브랜치 기반 Pages 설정 화면에서 도메인을 저장하면 GitHub가 이 파일을 만들 수 있으므로 로컬 변경과 함께 확인합니다.
+1. 저장소의 **Settings → Pages → Custom domain**에 `gameofview.com`을 입력합니다. 루트 **`CNAME`** 파일의 내용은 프로토콜·경로 없이 `gameofview.com` 한 줄입니다. 브랜치 기반 Pages 설정 화면에서 도메인을 저장하면 GitHub가 이 파일을 만들 수 있으므로 로컬 변경과 함께 확인합니다.
 2. 도메인 관리 업체의 DNS에서 다음 레코드를 설정합니다.
 
 | 종류 | 이름/호스트 | 값/대상 |
@@ -139,12 +141,16 @@ rec_en/split4_crash/20261030T035129-be0313/split4_crash.webm
 | A | `@` | `185.199.109.153` |
 | A | `@` | `185.199.110.153` |
 | A | `@` | `185.199.111.153` |
+| AAAA | `@` | `2606:50c0:8000::153` |
+| AAAA | `@` | `2606:50c0:8001::153` |
+| AAAA | `@` | `2606:50c0:8002::153` |
+| AAAA | `@` | `2606:50c0:8003::153` |
 | CNAME | `www` | `woowachart.github.io` |
 
 3. DNS 확인과 인증서 발급이 완료되면 Pages에서 **Enforce HTTPS**를 켭니다. `www`와 루트 도메인 모두 정상 연결되는지 확인합니다.
-4. 두 언어 HTML의 절대 주소 `canonical`, `hreflang`, `og:url`, `og:image`를 실제 도메인으로 함께 변경합니다. 이미지·CSS·영상·언어 전환은 상대 경로여서 그대로 사용할 수 있습니다.
+4. 두 언어 HTML의 `canonical`, `hreflang`, `og:url`, `og:image`는 이미 `https://gameofview.com/` 기준입니다. 연결 후 해당 주소의 응답을 확인합니다. OG 이미지와 홍보 영상 파일 자체는 기존 파일을 유지하며 영상 내용은 추후 교체합니다. 이미지·CSS·영상·언어 전환의 상대 경로는 그대로 사용할 수 있습니다.
 
-설정 근거: [GitHub Pages 사용자 지정 도메인 공식 안내](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site). 실제 도메인이 아직 정해지지 않아 현재 CNAME 파일은 없습니다.
+설정 참고: [GitHub Pages 사용자 지정 도메인 공식 안내](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site). DNS 설정과 Pages 설정 변경은 이번 로컬 작업에 포함하지 않았습니다.
 
 ## 파일 역할
 
@@ -155,7 +161,7 @@ rec_en/split4_crash/20261030T035129-be0313/split4_crash.webm
 | `style.css` | 두 언어·404 공통, 반응형 및 시스템 테마 |
 | `site.js` | 구매 URL, 판매자·이메일·결제 대행사 공통 표시, 영상 오류 안내 |
 | `terms.html`, `privacy.html`, `refund.html`, `contact.html` 및 `en/` 대응 파일 | 한국어·영어 정책과 판매자 정보 |
-| `favicon.svg` | 초록 캔들 + 노랑 ‘우’ 윤곽선, 폰트 의존 없음 |
+| `favicon.svg` | 초록 캔들 + 노랑 ‘G’ 윤곽선, 폰트 의존 없음 |
 | `404.html` | 한국어·영어 홈 복귀 링크 |
 | `.nojekyll` | 정적 파일 배포 |
 | `.gitignore` | 인코딩 도구·중간 파일 제외 |
@@ -173,6 +179,9 @@ Get-ChildItem -Recurse -File -Force |
 
 ## 검증 기록 / 한계
 
+- Game of View 이름 변경 후 `py check_site.py`: **PASS: 11 HTML pages, 290 local references, 19 media files, 0 errors**. 검사기는 옛 제품명(띄어쓰기·대소문자 변형 포함)을 거부하고 모든 페이지의 제목·헤더·푸터와 홈의 OG 제품명, 새 도메인의 canonical/hreflang/og:url을 확인합니다. 연락 이메일과 옛 저장 키의 이전 코드는 예외입니다.
+- 이름 변경 검증: Node 표준 라이브러리로 저장값 이전·새 값 우선·영어 직접 방문·저장소 차단 등 12개 동작 사례 통과. 메모리에서 옛 이름·문자 참조·잘못된 메타데이터를 삽입한 9개 사례에서 검사 실패를 확인했습니다. `node --check lang.js`, `node --check site.js`, `git diff --check` 통과. CNAME 파일은 없습니다.
+- 옛 이름을 포함한 실제 경로는 README의 작업·미디어 출처 폴더와 `media/enc.py`의 원본 영상 경로에 보존합니다. 기존 영상·포스터·스크린샷은 이번 이름 변경에서 수정하지 않았습니다.
 - 정책 페이지 추가 후 `py check_site.py`: **PASS: 11 HTML pages, 288 local references, 19 media files, 0 errors**.
 - `node --check site.js`, `node --check lang.js` 통과. Node 표준 라이브러리의 격리된 실행 환경에서 문서별 언어 이동, 쿼리·앵커 유지, 저장소 차단, 판매자·이메일 상수 변경, 결제 활성화 등 29개 동작 단언을 확인했습니다. 실제 브라우저 검증을 대신하지는 않습니다.
 - 정책 8개를 포함한 전체 HTML 11개가 로컬 HTTP에서 200 응답을 반환하고 디스크의 파일 내용과 일치했습니다.
