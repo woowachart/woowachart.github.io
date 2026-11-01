@@ -1,14 +1,14 @@
 """gameofview.com(Cloudflare Pages 프로젝트 gameofview)에 홈페이지를 올린다.
 
 사용: py -X utf8 deploy_cloudflare.py
-키: C:/Users/wildm/Desktop/cloudflare_apikey.txt (계정 토큰, Pages Write + Zone DNS Edit). 키는 출력·저장하지 않는다.
+키: C:/Users/wildm/.config/cloudflare/api_token (계정 토큰, Pages Write + Zone DNS Edit). 키는 출력·저장하지 않는다.
 git에 올라간 사이트 파일만 임시 폴더에 모아 wrangler로 올린다(검사 스크립트·README·docs 제외).
 """
 import os, shutil, subprocess, sys, tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-KEY_FILE = Path("C:/Users/wildm/Desktop/cloudflare_apikey.txt")
+KEY_FILE = Path("C:/Users/wildm/.config/cloudflare/api_token")
 ACCOUNT_ID = "7ab01a4153b553b8f1f6fe2b59485e14"
 PROJECT = "gameofview"
 SKIP = ("check_site.py", "README.md", ".gitignore", ".nojekyll", "deploy_cloudflare.py")
